@@ -446,6 +446,134 @@
             margin-bottom: 1rem;
         }
 
+        /* ===== Guide des tailles (modal) ===== */
+        .size-modal {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .size-modal.open {
+            display: flex;
+        }
+
+        .size-modal-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(3px);
+        }
+
+        .size-modal-dialog {
+            position: relative;
+            background: #ffffff;
+            max-width: 720px;
+            width: 90%;
+            padding: 2rem 2.25rem;
+            border-radius: 18px;
+            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.25);
+            z-index: 1;
+        }
+
+        .size-modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1.25rem;
+            border: none;
+            background: transparent;
+            font-size: 1.6rem;
+            cursor: pointer;
+            line-height: 1;
+            color: #111;
+        }
+
+        #size-guide-title {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .size-modal-intro {
+            font-size: 0.95rem;
+            color: #555;
+            margin-bottom: 1.25rem;
+        }
+
+        /* Onglets */
+        .size-tabs {
+            display: inline-flex;
+            border-radius: 999px;
+            background: #f3f3f3;
+            padding: 0.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .size-tab {
+            border: none;
+            background: transparent;
+            padding: 0.5rem 1.25rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border-radius: 999px;
+            color: #555;
+        }
+
+        .size-tab.active {
+            background: #111;
+            color: #fff;
+        }
+
+        /* Panels */
+        .size-panel {
+            display: none;
+        }
+
+        .size-panel.active {
+            display: block;
+        }
+
+        .size-note {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 0.75rem;
+        }
+
+        /* Tableau */
+        .size-table-wrapper {
+            overflow-x: auto;
+            margin-bottom: 1rem;
+        }
+
+        .size-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .size-table th,
+        .size-table td {
+            padding: 0.5rem 0.75rem;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+        }
+
+        .size-table th {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #444;
+        }
+
+        .size-tips {
+            list-style: disc;
+            margin: 0.5rem 0 0;
+            padding-left: 1.25rem;
+            font-size: 0.85rem;
+            color: #555;
+        }
+
         .qty-input {
             width: 64px;
             padding: 0.6rem 0.8rem;
@@ -797,6 +925,13 @@
             .price-main { font-size: 2rem; }
             .btn-primary, .btn-secondary { width: 100%; }
             .values-grid, .about-commitment { gap: 1.4rem; }
+        }
+
+        
+        @media (max-width: 600px) {
+            .size-modal-dialog {
+                padding: 1.5rem 1.25rem;
+            }
         }
 
 /* Hamburger menu styles */

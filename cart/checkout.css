@@ -302,6 +302,20 @@
             border-top: 1px solid var(--border);
         }
 
+        /* Student discount row styling */
+        #studentDiscount {
+            display: flex !important;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            color: #2e7d32;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        #studentDiscount.hidden {
+            display: none !important;
+        }
+
         .student-badge {
             display: inline-block;
             padding: 0.4rem 1rem;

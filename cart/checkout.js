@@ -208,6 +208,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const isStudentCheckbox = document.getElementById('isStudent');
         const studentHint = document.getElementById('studentHint');
         const studentWarning = document.getElementById('studentWarning');
+        let isUpdatingCheckbox = false; // Flag to prevent loops
 
         if (emailInput) {
             emailInput.addEventListener('input', () => {
@@ -217,7 +218,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (email && isUniversity) {
                     if (studentHint) studentHint.style.display = 'block';
                     if (studentWarning) studentWarning.style.display = 'none';
+                    // Set checkbox without triggering change event
+                    isUpdatingCheckbox = true;
                     if (isStudentCheckbox) isStudentCheckbox.checked = true;
+                    isUpdatingCheckbox = false;
                 } else if (email && isStudentCheckbox && isStudentCheckbox.checked && !isUniversity) {
                     if (studentHint) studentHint.style.display = 'none';
                     if (studentWarning) studentWarning.style.display = 'block';
@@ -237,6 +241,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (isStudentCheckbox) {
             isStudentCheckbox.addEventListener('change', () => {
+                // Skip if checkbox was updated programmatically (to avoid loops)
+                if (isUpdatingCheckbox) return;
+
                 const email = emailInput ? emailInput.value.trim() : '';
                 const isUniversity = isUniversityEmail(email);
 

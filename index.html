@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Elysian Unity - Official Website</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="globals.css">
     <link rel="icon" type="image/png" href="/public/favicon.png">
 </head>
 <body>
@@ -129,7 +129,7 @@
                         <div class="price-main">65€</div>
                         <div class="price-student">
                             <div class="price-student-label">Tarif Étudiant</div>
-                            <div class="price-student-amount">55€</div>
+                            <div class="price-student-amount">52€</div>
                         </div>
                     </div>
                     <div class="product-cta">
@@ -141,7 +141,7 @@
                             data-image="/public/charcoal_hoodie.png">
                             Ajouter au panier
                         </button>
-                        <button class="btn-secondary">Guide des tailles</button>
+                        <button class="btn-secondary size-guide-btn" data-product="hoodie">Guide des tailles</button>
                     </div>
                     <div class="payment-methods">
                         <div class="payment-title">Paiement sécurisé</div>
@@ -189,7 +189,7 @@
                         <div class="price-main">48€</div>
                         <div class="price-student">
                             <div class="price-student-label">Tarif Étudiant</div>
-                            <div class="price-student-amount">45€</div>
+                            <div class="price-student-amount">38€</div>
                         </div>
                     </div>
                     <div class="product-cta">
@@ -201,8 +201,7 @@
                             data-image="/public/charcoal_tshirt.png">
                             Ajouter au panier
                         </button>
-
-                        <button class="btn-secondary">Guide des tailles</button>
+                        <button class="btn-secondary size-guide-btn" data-product="tshirt">Guide des tailles</button>
                     </div>
                     <div class="payment-methods">
                         <div class="payment-title">Paiement sécurisé</div>
@@ -270,7 +269,7 @@
                             data-image="/public/charcoal edition drop 2.png">
                             Ajouter au panier
                         </button>
-                        <button class="btn-secondary">Guide des tailles</button>
+                        <button class="btn-secondary size-guide-btn" data-product="hoodie">Guide des tailles</button>
                     </div>
                     <div class="payment-methods">
                         <div class="payment-title">Paiement sécurisé</div>
@@ -352,48 +351,139 @@
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-brand">
-                <h3>ELYSIAN UNITY</h3>
-                <p>Mode éco-responsable et accessible. Une nouvelle génération de streetwear conscient, créé avec passion et engagement.</p>
-            </div>
-            <div class="footer-links">
-                <h4>Navigation</h4>
-                <ul>
-                    <li><a href="#collection">Collection</a></li>
-                    <li><a href="#valeurs">Nos Valeurs</a></li>
-                    <li><a href="#about">Notre Histoire</a></li>
-                    <li><a href="#">Contact</a></li>
-                </ul>
-            </div>
-            <div class="footer-links">
-                <h4>Suivez-nous</h4>
-                <ul>
-                    <li><a href="https://www.instagram.com/elysianunity/">Instagram</a></li>
-                    <li><a href="https://www.facebook.com/elysianunity">Facebook</a></li>
-                    <li><a href="#">TikTok</a></li>
-                    <li><a href="#">LinkedIn</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>© 2025 Elysian Unity — Tous droits réservés</p>
-        </div>
-    </footer>
+    <!-- MODAL GLOBAL GUIDE DES TAILLES -->
+    <div id="size-guide-modal" class="size-modal" aria-hidden="true">
+        <div class="size-modal-backdrop"></div>
+        <div class="size-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="size-guide-title">
+            <button class="size-modal-close" aria-label="Fermer">&times;</button>
 
-    <!-- Mini script pour gérer la sélection des tailles (pure UX) -->
-    <script>
-        document.querySelectorAll('.size-options').forEach(group => {
-            group.addEventListener('click', (e) => {
-                const btn = e.target.closest('.size-option');
-                if (!btn) return;
-                group.querySelectorAll('.size-option').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-            });
-        });
-    </script>
+            <h2 id="size-guide-title">Guide des tailles</h2>
+            <p class="size-modal-intro">
+                Nos pièces ont une coupe unisexe. Si vous hésitez entre deux tailles, 
+                choisissez la taille au-dessus pour un effet plus confort / oversize.
+            </p>
+
+            <div class="size-tabs">
+                <button class="size-tab active" data-tab="hoodie">Hoodie</button>
+                <button class="size-tab" data-tab="tshirt">T-shirt</button>
+            </div>
+
+            <div class="size-panel active" id="size-panel-hoodie">
+                <h3>Hoodies — Coupe unisexe</h3>
+                <p class="size-note">Mesures en cm (à plat). Comparez avec un hoodie qui vous va bien.</p>
+
+                <div class="size-table-wrapper">
+                    <table class="size-table">
+                        <thead>
+                            <tr>
+                                <th>Taille</th>
+                                <th>Poitrine</th>
+                                <th>Longueur</th>
+                                <th>Manches</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>XS</td><td>49</td><td>65</td><td>61</td></tr>
+                            <tr><td>S</td><td>51.5</td><td>68</td><td>64</td></tr>
+                            <tr><td>M</td><td>54</td><td>72</td><td>65.5</td></tr>
+                            <tr><td>L</td><td>57</td><td>74</td><td>67</td></tr>
+                            <tr><td>XL</td><td>60</td><td>76</td><td>68.5</td></tr>
+                            <tr><td>XXL</td><td>63</td><td>78</td><td>70</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <ul class="size-tips">
+                    <li>Fit classique : prenez votre taille habituelle.</li>
+                    <li>Effet oversize : prenez une taille au-dessus.</li>
+                    <li>Entre deux tailles : privilégiez la taille supérieure.</li>
+                </ul>
+            </div>
+
+            <div class="size-panel" id="size-panel-tshirt">
+                <h3>T-shirts — Coupe droite unisexe</h3>
+                <p class="size-note">Mesures en cm (à plat).</p>
+
+                <div class="size-table-wrapper">
+                    <table class="size-table">
+                        <thead>
+                            <tr>
+                                <th>Taille</th>
+                                <th>Poitrine</th>
+                                <th>Longueur</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>XS</td><td>47</td><td>67</td></tr>
+                            <tr><td>S</td><td>49.5</td><td>69</td></tr>
+                            <tr><td>M</td><td>52</td><td>72</td></tr>
+                            <tr><td>L</td><td>55</td><td>74</td></tr>
+                            <tr><td>XL</td><td>58</td><td>76</td></tr>
+                            <tr><td>XXL</td><td>61</td><td>78</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <ul class="size-tips">
+                    <li>Fit classique : prenez votre taille habituelle.</li>
+                    <li>Look loose streetwear : une taille au-dessus.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+   <!-- Footer -->
+<footer>
+    <div class="footer-content">
+        
+        <div class="footer-brand">
+            <h3>ELYSIAN UNITY</h3>
+            <p>
+                Mode éco-responsable et accessible.<br>
+                Une nouvelle génération de streetwear conscient, créé avec passion et engagement.
+            </p>
+        </div>
+
+        <div class="footer-links">
+            <h4>Navigation</h4>
+            <ul>
+                <li><a href="#collection">Collection</a></li>
+                <li><a href="#valeurs">Nos Valeurs</a></li>
+                <li><a href="#about">Notre Histoire</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-links">
+            <h4>Suivez-nous</h4>
+            <ul>
+                <li><a href="https://www.instagram.com/elysianunity/">Instagram</a></li>
+                <li><a href="https://www.facebook.com/elysianunity">Facebook</a></li>
+                <li><a href="#">TikTok</a></li>
+                <li><a href="#">LinkedIn</a></li>
+            </ul>
+        </div>
+
+        <!-- Nouvelle colonne totalement intégrée, même design -->
+        <div class="footer-links">
+            <h4>Légal</h4>
+            <ul>
+                <li><a href="/legal/mentions-legales.html">Mentions légales</a></li>
+                <li><a href="/legal/cgv.html">CGV</a></li>
+                <li><a href="/legal/confidentialite.html">Confidentialité</a></li>
+                <li><a href="/legal/retours.html">Retours</a></li>
+                <li><a href="/legal/cookies.html">Cookies</a></li>
+            </ul>
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+        <p>© 2025 Elysian Unity — Tous droits réservés</p>
+    </div>
+</footer>
+
+
     <!-- Cart utilities: enable add-to-cart handlers and counter -->
     <script src="/main.js"></script>
     <script src="/cart/checkout.js"></script>

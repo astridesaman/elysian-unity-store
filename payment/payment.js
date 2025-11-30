@@ -94,60 +94,79 @@
 
   // Compute totals from canonical cart
   function calcTotals() {
-    var cart = readCart();
-    var sub = 0;
-    for (var i = 0; i < cart.length; i++) { sub += (parseFloat(cart[i].price) || 0) * (cart[i].qty || 1); }
-    
-    // Check for student discount - debug and ensure we get the right value
-    var isStudent = false;
-    try {
-      if (typeof isStudentDiscount === 'function') {
-        isStudent = isStudentDiscount();
-      } else if (typeof window.isStudentDiscount === 'function') {
-        isStudent = window.isStudentDiscount();
-      } else {
-        // Fallback: check checkbox directly
-        var checkbox = document.getElementById('isStudent');
-        if (checkbox) isStudent = checkbox.checked;
-      }
-    } catch (e) {
-      console.warn('Could not determine student status:', e);
-    }
-    
-    var discount = 0;
-    var subAfterDiscount = sub;
-    if (isStudent) {
-      discount = sub * 0.20; // 20% discount on original subtotal
-      subAfterDiscount = sub - discount;
-    }
-    
-    var shipping = subAfterDiscount > 100 ? 0 : (subAfterDiscount === 0 ? 0 : 4);
-    var total = subAfterDiscount + shipping;
-    
-    // Always display original subtotal (before discount)
-    var subEl = document.getElementById('subTotal'); if (subEl) subEl.textContent = formatEuro(sub);
-    var shipEl = document.getElementById('shipping'); if (shipEl) shipEl.textContent = shipping === 0 ? 'Gratuite' : formatEuro(shipping);
-    
-    // Show discount row if applicable
-    var discountEl = document.getElementById('studentDiscount');
-    if (isStudent && discount > 0) {
-      if (discountEl) {
-        discountEl.style.display = 'flex';
-        var discountValue = discountEl.querySelector('.discount-value');
-        if (discountValue) discountValue.textContent = '-' + formatEuro(discount);
-      }
-    } else {
-      if (discountEl) discountEl.style.display = 'none';
-    }
-    
-    var totalEl = document.getElementById('total'); if (totalEl) totalEl.textContent = formatEuro(total);
-    renderSummaryFromCart(cart);
-    return { subTotal: sub, shipping: shipping, total: total, cart: cart };
+  const cart = readCart();
+
+  // 1) Sous-total brut
+  let sub = 0;
+  for (let i = 0; i < cart.length; i++) {
+    sub += (parseFloat(cart[i].price) || 0) * (cart[i].qty || 1);
   }
 
+  // 2) Étudiant ?
+  let isStudent = false;
+  try {
+    if (typeof isStudentDiscount === 'function') {
+      isStudent = isStudentDiscount();
+    } else {
+      const checkbox = document.getElementById('isStudent');
+      if (checkbox) isStudent = checkbox.checked;
+    }
+  } catch (e) {
+    console.warn('Erreur détection étudiant :', e);
+  }
+
+  // 3) Calcul réduction
+  let discount = 0;
+  if (isStudent && sub > 0) {
+    discount = sub * 0.20; // 20 %
+  }
+  const subAfterDiscount = sub - discount;
+
+  // 4) Livraison
+  const shipping = subAfterDiscount === 0 ? 0 : (subAfterDiscount > 100 ? 0 : 4);
+
+  // 5) Total final
+  const total = subAfterDiscount + shipping;
+
+  console.log('[payment.js] Final total => sub=', sub, 'discount=', discount, 'ship=', shipping, 'total=', total);
+
+  // 6) Mise à jour du récap DOM
+  const subEl = document.getElementById('subtotal');
+  if (subEl) subEl.textContent = formatEuro(sub);
+
+  const shipEl = document.getElementById('shipping');
+  if (shipEl) shipEl.textContent = shipping === 0 ? 'Gratuite' : formatEuro(shipping);
+
+  const discountRow = document.getElementById('studentDiscount');
+  if (discountRow) {
+    if (discount > 0) {
+      discountRow.style.display = 'flex';
+      const discountValue = discountRow.querySelector('.discount-value');
+      if (discountValue) {
+        // formatEuro ajoute déjà le "€"
+        discountValue.textContent = '-' + formatEuro(discount).replace('€', '') + '€';
+      }
+    } else {
+      discountRow.style.display = 'none';
+    }
+  }
+
+  const totalEl = document.getElementById('total');
+  if (totalEl) totalEl.textContent = formatEuro(total);  // ← ici on affiche bien 112€
+
+  // 7) Rendu des lignes produits
+  renderSummaryFromCart(cart);
+
+  return { subTotal: sub, shipping, total, cart };
+}
+
+
   // Recalc on cart updates (same tab) and storage changes (other tabs)
-  document.addEventListener('cartUpdated', calcTotals);
-  window.addEventListener('storage', function (e) { if (e.key === 'cart') calcTotals(); });
+  document.addEventListener('cartUpdated', function() {
+    console.log('[payment.js] cartUpdated event fired, recalculating totals');
+    calcTotals();
+  });
+  window.addEventListener('storage', function (e) { if (e.key === 'cart') { console.log('[payment.js] cart changed in storage'); calcTotals(); } });
 
   // Wire change listeners for fallback form fields if present
   ['product','qty','size'].forEach(function(id){ var el = document.getElementById(id); if (!el) return; el.addEventListener('change', calcTotals); if (id==='qty') el.addEventListener('input', calcTotals); });

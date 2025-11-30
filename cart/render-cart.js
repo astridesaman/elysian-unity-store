@@ -8,12 +8,19 @@ function renderCart() {
         return;
     }
 
+    // On détecte si on est sur la page checkout (réduction étudiante)
+    const isCheckout = !!document.getElementById('isStudent');
+
     if (!cart || cart.length === 0) {
         container.innerHTML = "<p class=\"empty-cart\">Votre panier est vide.</p>";
         const subtotalEl = document.getElementById("subtotal");
         const totalEl = document.getElementById("total");
+        const shippingEl = document.getElementById("shipping");
+
         if (subtotalEl) subtotalEl.textContent = "0€";
-        if (totalEl) totalEl.textContent = "0€";
+        if (shippingEl && !isCheckout) shippingEl.textContent = "0€";
+        if (totalEl && !isCheckout) totalEl.textContent = "0€";
+
         return;
     }
 
@@ -57,17 +64,27 @@ function renderCart() {
     }
 
     const subtotal = cart.reduce((sum, item) => sum + (parseFloat(item.price) || 0) * (item.qty || 0), 0);
-    const shipping = subtotal > 100 ? 0 : 4;
+    const shipping = subtotal > 100 ? 0 : (subtotal === 0 ? 0 : 4);
     const total = subtotal + shipping;
 
     const subtotalEl = document.getElementById("subtotal");
     const shippingEl = document.getElementById("shipping");
     const totalEl = document.getElementById("total");
 
-    if (subtotalEl) subtotalEl.textContent = subtotal + "€";
-    if (shippingEl) shippingEl.textContent = (shipping === 0 ? "Gratuite" : shipping + "€");
-    if (totalEl) totalEl.textContent = total + "€";
+    // On peut toujours afficher le sous-total brut (avant remise)
+    if (subtotalEl) subtotalEl.textContent = subtotal.toFixed(2).replace('.00','') + "€";
+
+    // Sur la page checkout, on laisse payment.js gérer shipping + total (avec réduction)
+    if (!isCheckout) {
+        if (shippingEl) {
+            shippingEl.textContent = shipping === 0 ? "Gratuite" : shipping.toFixed(2).replace('.00','') + "€";
+        }
+        if (totalEl) {
+            totalEl.textContent = total.toFixed(2).replace('.00','') + "€";
+        }
+    }
 }
+
 
 // Event delegation for quantity controls + remove
 function setupCartInteractions() {

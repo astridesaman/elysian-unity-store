@@ -1,0 +1,103 @@
+/* ================================
+   PAGES LÉGALES – ELYSIAN UNITY
+   (Mentions, CGV, Cookies, Retours)
+================================ */
+
+/* Mise en page spécifique aux pages légales
+   (le header et le reste du site gardent leurs styles globaux) */
+
+body.legal-page {
+    background: #ffffff;
+    color: #0a0a0a;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    margin: 0;
+    padding-top: 5rem; /* laisse respirer le header fixe */
+}
+
+/* Conteneur du contenu légal */
+body.legal-page main {
+    max-width: 820px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+}
+
+/* Titres */
+body.legal-page main h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+}
+
+body.legal-page main h2 {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-top: 2rem;
+    margin-bottom: 0.8rem;
+}
+
+/* Paragraphes */
+body.legal-page main p {
+    font-size: 0.95rem;
+    color: #444;
+    line-height: 1.65;
+    margin-bottom: 1rem;
+}
+
+/* Listes */
+body.legal-page main ul {
+    margin: 0.5rem 0 1.5rem 1.2rem;
+}
+
+body.legal-page main li {
+    color: #444;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* Liens dans le contenu (pas dans le header/footer) */
+body.legal-page main a {
+    color: #0a0a0a;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+/* Bloc mise en avant (ex : tarif étudiant) */
+body.legal-page main .highlight {
+    background: #f4f7f4;
+    border-left: 4px solid #0a0a0a;
+    padding: 1rem 1.2rem;
+    margin: 1.5rem 0;
+    border-radius: 6px;
+}
+
+/* Séparateur léger après les titres */
+body.legal-page main h2 + p,
+body.legal-page main h2 + ul {
+    border-top: 1px solid #f3f3f3;
+    padding-top: 0.8rem;
+}
+
+/* Dernière ligne (ex : date MAJ) */
+body.legal-page main p:last-of-type {
+    margin-top: 3rem;
+    font-size: 0.85rem;
+    color: #7a7a7a;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    body.legal-page main {
+        padding: 2rem 1.2rem 3rem;
+    }
+
+    body.legal-page main h1 {
+        font-size: 1.7rem;
+    }
+
+    body.legal-page main h2 {
+        font-size: 1rem;
+    }
+}
