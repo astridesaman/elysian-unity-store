@@ -227,13 +227,26 @@
     });
   }
 
-  async function simulateSuccess() {
-    await new Promise(function(r){ setTimeout(r,900); });
-    var totals = calcTotals();
-    var orderSummaryEl = document.getElementById('orderSummary'); if (orderSummaryEl) orderSummaryEl.textContent = 'Commande (mode démo) — paiement simulé.';
-    if (overlay) overlay.classList.add('show');
-    try { if (typeof clearCart === 'function') clearCart(); } catch (e) {}
-  }
+  const payload = {
+    email: emailInput.value,
+    items: cartItems.map(item => ({
+        product_id: item.id,
+        size: item.size,
+        quantity: item.quantity,
+    })),
+};
+
+fetch("https://elysianunity.fr/orders/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+})
+.then(r => r.json())
+.then(order => {
+    console.log("Commande créée", order);
+    // ici plus tard : redirection vers Stripe Checkout
+});
+
 
   // initial render
   calcTotals();

@@ -138,12 +138,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const productId = btn.dataset.productId;
 
-            // À ADAPTER : remplace par ton vrai endpoint (Formspree, backend, etc.)
-            fetch('/api/waitlist', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, productId })
+            fetch("https://elysianunity.fr/waitlist/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    email,
+                    product_id: 4, // ex: Collector Edition
+                }),
             })
+
             .then(() => {
                 alert("Merci ! Tu es bien inscrit(e) sur la liste d'attente 🤍");
             })
@@ -191,3 +194,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 })();
+
+
