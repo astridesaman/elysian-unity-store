@@ -128,6 +128,33 @@ document.querySelectorAll('.btn-primary[data-product-id]').forEach(button => {
   });
 });
 
+document.addEventListener('DOMContentLoaded', () => {
+    const waitlistButtons = document.querySelectorAll('.waitlist-btn');
+
+    waitlistButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const email = prompt("Laisse ton email pour rejoindre la liste d'attente :");
+            if (!email) return;
+
+            const productId = btn.dataset.productId;
+
+            // À ADAPTER : remplace par ton vrai endpoint (Formspree, backend, etc.)
+            fetch('/api/waitlist', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, productId })
+            })
+            .then(() => {
+                alert("Merci ! Tu es bien inscrit(e) sur la liste d'attente 🤍");
+            })
+            .catch(() => {
+                alert("Merci ! Si le formulaire ne fonctionne pas, écris-nous à admin@elysianunity.fr");
+            });
+        });
+    });
+});
+
+
 // Hamburger menu toggle (responsive)
 (function () {
   function closeNav() {
