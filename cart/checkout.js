@@ -186,105 +186,15 @@ window.addEventListener('storage', (e) => {
         updateCartCounter();
     }
 });
-
-// UNIVERSITY detection + email/checkbox wiring (moved from inline script)
-// Keep a conservative list to avoid false positives
-const UNIVERSITY_DOMAINS = [
-    '.edu', '.ac.uk', '.etu.', '.univ-', '.ac-', '.student.', '.edu.fr',
-    '.utc.fr', '@etudiant.', '@alum.', '.oxon.org', '.cam.ac.uk', '.sorbonne',
-    '.polytechnique', '.imt.fr', '.ecp.fr', '.epitech.'
-];
-
-function isUniversityEmail(email) {
-    if (!email) return false;
-    const domain = email.toLowerCase();
-    return UNIVERSITY_DOMAINS.some(ud => domain.includes(ud));
-}
-
-// Wire email input and student checkbox to update UI and totals
-document.addEventListener('DOMContentLoaded', function () {
+// First order discount helper - exposed globally for payment.js
+function isFirstOrderDiscount() {
     try {
-        const emailInput = document.getElementById('email');
-        const isStudentCheckbox = document.getElementById('isStudent');
-        const studentHint = document.getElementById('studentHint');
-        const studentWarning = document.getElementById('studentWarning');
-        let isUpdatingCheckbox = false; // Flag to prevent loops
-
-        if (emailInput) {
-            emailInput.addEventListener('input', () => {
-                const email = emailInput.value.trim();
-                const isUniversity = isUniversityEmail(email);
-
-                if (email && isUniversity) {
-                    if (studentHint) studentHint.style.display = 'block';
-                    if (studentWarning) studentWarning.style.display = 'none';
-                    // Set checkbox without triggering change event
-                    isUpdatingCheckbox = true;
-                    if (isStudentCheckbox) isStudentCheckbox.checked = true;
-                    isUpdatingCheckbox = false;
-                } else if (email && isStudentCheckbox && isStudentCheckbox.checked && !isUniversity) {
-                    if (studentHint) studentHint.style.display = 'none';
-                    if (studentWarning) studentWarning.style.display = 'block';
-                } else {
-                    if (studentHint) studentHint.style.display = 'none';
-                    if (studentWarning) studentWarning.style.display = 'none';
-                }
-
-                // Trigger recalculation of totals when email/student status changes
-                try {
-                    document.dispatchEvent(new CustomEvent('cartUpdated'));
-                } catch (e) {
-                    document.dispatchEvent(new Event('cartUpdated'));
-                }
-            });
-        }
-
-        if (isStudentCheckbox) {
-            isStudentCheckbox.addEventListener('change', () => {
-                // Skip if checkbox was updated programmatically (to avoid loops)
-                if (isUpdatingCheckbox) return;
-
-                const email = emailInput ? emailInput.value.trim() : '';
-                const isUniversity = isUniversityEmail(email);
-
-                if (isStudentCheckbox.checked && email && !isUniversity) {
-                    if (studentWarning) studentWarning.style.display = 'block';
-                    if (studentHint) studentHint.style.display = 'none';
-                } else {
-                    if (studentWarning) studentWarning.style.display = 'none';
-                }
-
-                try {
-                    document.dispatchEvent(new CustomEvent('cartUpdated'));
-                } catch (e) {
-                    document.dispatchEvent(new Event('cartUpdated'));
-                }
-            });
-        }
-    } catch (e) {
-        console.warn('Could not wire student detection:', e);
-    }
-
-    // Ensure payment totals are initialized after other scripts (e.g., payment.js)
-    setTimeout(function () {
-        if (typeof calcTotals === 'function') {
-            try { calcTotals(); } catch (e) { console.warn('calcTotals error', e); }
-        }
-    }, 120);
-});
-
-// Student discount helper - exposed globally for payment.js
-function isStudentDiscount() {
-    try {
-        var checkbox = document.getElementById('isStudent');
+        var checkbox = document.getElementById('isFirstOrder');
         return checkbox ? checkbox.checked : false;
     } catch (e) {
         return false;
     }
 }
-
-// Make it available globally
-window.isStudentDiscount = isStudentDiscount;
 
 // Wire navigation buttons (data-go-step) and return-home button to avoid inline handlers
 document.addEventListener('DOMContentLoaded', function () {

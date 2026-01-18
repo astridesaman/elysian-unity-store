@@ -9,7 +9,7 @@ function renderCart() {
     }
 
     // On détecte si on est sur la page checkout (réduction étudiante)
-    const isCheckout = !!document.getElementById('isStudent');
+    const isCheckout = !!document.getElementById('isFirstOrder');
 
     if (!cart || cart.length === 0) {
         container.innerHTML = "<p class=\"empty-cart\">Votre panier est vide.</p>";

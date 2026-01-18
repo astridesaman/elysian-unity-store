@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Script modal guide des tailles
   
         const sizeModal = document.getElementById('size-guide-modal');
+        if (!sizeModal) return; // Not on this page
         const backdrop = sizeModal.querySelector('.size-modal-backdrop');
         const closeBtn = sizeModal.querySelector('.size-modal-close');
         const tabButtons = sizeModal.querySelectorAll('.size-tab');

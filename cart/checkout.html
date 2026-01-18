@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="script-src 'self' https://js.stripe.com https://cdn.jsdelivr.net; connect-src 'self' https://api.stripe.com; object-src 'none';">
+    <meta http-equiv="Content-Security-Policy" content="
+        script-src 'self' https://js.stripe.com https://cdn.jsdelivr.net 'unsafe-inline';
+        connect-src 'self' https://api.stripe.com https://elysian-unity-backend.onrender.com;
+        object-src 'none';
+        ">
     <title>Checkout - Elysian Unity</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/cart/checkout.css">
@@ -106,25 +110,19 @@
                             </div>
                         </div>
 
-                        <!-- Student Discount Section -->
+                        <!-- Discount Section -->
+
                         <div style="margin-top: 2rem; padding: 1.5rem; background: #f5f9f5; border-radius: 8px; border-left: 4px solid #2e7d32;">
                             <label style="display: flex; align-items: flex-start; gap: 0.75rem; cursor: pointer;">
-                                <input type="checkbox" id="isStudent" style="width: 20px; height: 20px; margin-top: 2px; cursor: pointer;">
+                                <input type="checkbox" id="isFirstOrder" style="width: 20px; height: 20px; margin-top: 2px; cursor: pointer;">
                                 <div>
-                                    <div style="font-weight: 500; color: var(--text); margin-bottom: 0.25rem;">💚 Je suis étudiant(e)</div>
+                                    <div style="font-weight: 500; color: var(--text); margin-bottom: 0.25rem;">Première commande</div>
                                     <div style="font-size: 0.85rem; color: var(--text-muted);">
-                                        Bénéficiez de <strong>20% de réduction</strong> avec une adresse email universitaire.
+                                        Bénéficiez de <strong>10% de réduction</strong> sur votre première commande.
                                     </div>
                                 </div>
                             </label>
-                            <div id="studentHint" style="display: none; margin-top: 0.75rem; padding: 0.75rem; background: white; border-radius: 6px; font-size: 0.85rem; color: #2e7d32; border: 1px solid #c8e6c9;">
-                                ✓ Votre email semble être universitaire. La réduction sera appliquée !
-                            </div>
-                            <div id="studentWarning" style="display: none; margin-top: 0.75rem; padding: 0.75rem; background: #fff3cd; border-radius: 6px; font-size: 0.85rem; color: #856404; border: 1px solid #ffc107;">
-                                ⚠ Nous n'avons pas reconnu d'email universitaire. Veuillez utiliser une adresse avec un domaine comme : .edu, .etu, .student, .univ-, .ac-
-                            </div>
-                        </div>
-
+                        </div> 
                         <div style="display: flex; gap: 1rem; margin-top: 2rem;">
                             <button type="button" class="btn btn-secondary" data-go-step="1">← Retour</button>
                             <button type="button" class="btn" data-go-step="3">Continuer vers le paiement</button>
@@ -172,8 +170,8 @@
                     <span>Sous-total</span>
                     <span id="subtotal">0€</span>
                 </div>
-                <div class="summary-row" id="studentDiscount" style="display: none;">
-                    <span>💚 Réduction étudiante (20%)</span>
+                <div class="summary-row" id="firstOrderDiscount" style="display: none;">
+                    <span>🎁 Réduction première commande (10%)</span>
                     <span class="discount-value">-0€</span>
                 </div>
                 <div class="summary-row">
@@ -197,6 +195,10 @@
         </div>
     </div>
 
+    <!-- Set Stripe key -->
+    <script>
+        window.STRIPE_PUBLISHABLE_KEY = "pk_test_51SUAPzEKOGRXmBxBNsOq0NUEMrarNnXxTa4a9i3x2IJYCYBiQ8HEklmfXH2jAAToyV6PpnUZhqtDkRkRnLEIM5pN00sYptIAup";
+    </script>
     <!-- Stripe JS -->
     <script src="https://js.stripe.com/v3/"></script>
     <!-- Inline checkout logic moved to /cart/checkout.js to comply with CSP -->
