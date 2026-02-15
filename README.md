@@ -1,42 +1,39 @@
-<!-- README for Elysian Unity static storefront -->
-# Elysian Unity - Store (Static)
+<!-- README pour la boutique statique Elysian Unity -->
+# Elysian Unity — Store (statique)
 
-Site statique de démonstration pour la boutique Elysian Unity. Ce dépôt contient les pages publiques, la logique du panier (stockée en `localStorage`) et une intégration front-end de Stripe Elements avec un mode « demo » (fallback) pour tests locaux.
+Site statique de démonstration pour la boutique Elysian Unity. Ce dépôt contient les pages publiques, la logique du panier (stockée dans `localStorage`) et une intégration front-end de Stripe Elements avec un mode de test local (simulation) si le backend n'est pas disponible.
 
-**But du projet**
-- Fournir une boutique statique simple (HTML/CSS/JS) avec : ajout au panier, édition du panier, récapitulatif et écran de paiement.
-- Démo Stripe Elements côté client; le traitement réel des paiements nécessite un endpoint serveur (`/create-payment-intent`).
+**Objectif**
+- Fournir une boutique statique simple (HTML/CSS/JS) : ajouter au panier, modifier le panier, récapitulatif et flux de paiement front-end.
 
-**Aperçu des fonctionnalités**
-- Ajout d'articles au panier avec choix de taille et quantité.
+**Fonctionnalités clés**
+- Ajouter des articles au panier avec options (taille, quantité).
 - Persistance du panier dans `localStorage` (clé `cart`).
-- Page de panier interactive : modifier quantité, supprimer article, voir sous-total / livraison / total.
-- Page de paiement : récapitulatif ligne-par-ligne depuis le panier, formulaire de livraison, Stripe Elements pour la saisie de la carte.
-- Mode démo local si le backend Stripe n'est pas disponible (simulation de paiement).
+- Page de panier réactive et rendu via JavaScript.
+- Intégration Stripe Elements côté client; le traitement réel nécessite un serveur pour créer un PaymentIntent.
 
-**Structure du dépôt**
-- `index.html` — page d'accueil / listing produits.
-- `styles.css` — styles globaux.
-- `main.js` — scripts UX globaux (sélection tailles, etc.).
-- `products.json` — (optionnel) données produits.
-- `cart/` — fichiers du panier :
-  - `cart.html` — page panier
-  - `cart.css` — styles page panier
-  - `cart.js` — utilitaires du panier (getCart, addToCart, updateCartItem, removeCartItem, clearCart)
-  - `render-cart.js` — rendu et interactions de la page panier
-- `payment/` — fichiers de paiement :
-  - `payments.html` — page paiement
-  - `payment.css` — styles paiement
-  - `payment.js` — logique Stripe / calculs totaux / soumission
+**Structure du dépôt (principale)**
+- [index.html](index.html) — page d'accueil / listing produits
+- [globals.css](globals.css) — styles globaux
+- [main.js](main.js) — scripts UX globaux
+- [products.json](products.json) — données produits (optionnel)
+- [cart/checkout.html](cart/checkout.html) — page panier / checkout
+- [cart/checkout.css](cart/checkout.css) — styles de la page panier
+- [cart/checkout.js](cart/checkout.js) — logique d'interaction du panier
+- [cart/render-cart.js](cart/render-cart.js) — rendu du panier sur la page
+- [payment/payment.js](payment/payment.js) — logique de paiement / Stripe (front-end)
+- [legal/](legal/) — pages légales (CGV, confidentialité, etc.)
+- [public/](public/) — ressources publiques
+
+> Remarque : certains noms de fichiers ont été mis à jour pour refléter l'arborescence actuelle du projet.
 
 **Prérequis**
-- Navigateur moderne (Chrome, Firefox, Edge).
-- Pour tester localement, un serveur statique est suffisant (voir commandes).
-- Pour paiements réels : une clé Stripe publique et un serveur exposant `/create-payment-intent`.
+- Navigateur moderne (Chrome, Edge, Firefox).
+- Pour tester localement, un simple serveur statique suffit.
 
 **Exécuter localement (rapide)**
 
-PowerShell (dans le dossier du projet) :
+PowerShell (depuis le dossier du projet) :
 
 ```powershell
 # Serveur HTTP simple (Python 3)
@@ -46,27 +43,24 @@ python -m http.server 8000
 npx serve . -l 8000
 ```
 
-Puis ouvrir `http://localhost:8000` dans le navigateur.
+Ouvrez ensuite `http://localhost:8000` et parcourez le site.
 
-Visitez `index.html` → ajoutez des articles → `cart/cart.html` → `payment/payments.html`.
+**Flux de paiement & Stripe**
+- Le front-end utilise Stripe Elements pour collecter les données de carte. En production, un endpoint serveur doit créer un PaymentIntent et renvoyer le `client_secret` au client.
+- Endpoint attendu côté serveur : `POST /create-payment-intent` (renvoie `{ clientSecret: '...' }`).
+- En l'absence d'un backend Stripe, le code client inclut un mode demo qui simule une réussite de paiement pour tests locaux — ne pas utiliser cela en production.
+- Pour brancher Stripe réel : définissez votre clé publique dans [payment/payment.js](payment/payment.js) (remplacez `pk_test_VOTRE_CLE_PUBLIQUE_STRIPE`) et fournissez un endpoint serveur sécurisé.
 
-**Notes Stripe & sécurité**
-- Le front-end inclut Stripe Elements (`https://js.stripe.com/v3`) pour collecter les données de carte.
-- NE TRAITEZ PAS les paiements uniquement côté client en production. Le serveur doit créer un PaymentIntent et renvoyer `client_secret`.
-- Endpoint attendu (exemple) : `POST /create-payment-intent` qui reçoit le panier et renvoie `{ clientSecret: '...' }`.
-- En l'absence de backend, le projet utilise un mode demo qui simule une réussite de paiement pour tests locaux.
+**Données localStorage et debug**
+- Le panier est stocké sous la clé `cart` dans `localStorage`.
+- Pour réinitialiser le panier : ouvrez DevTools → Application → Local Storage → supprimez la clé `cart`, ou exécutez `localStorage.removeItem('cart')` dans la console.
 
-**Variables & configuration**
-- Si vous souhaitez brancher Stripe réel, définissez votre clé publique dans `payment/payment.js` (remplacer `pk_test_VOTRE_CLE_PUBLIQUE_STRIPE`) et déployez un endpoint serveur utilisant votre clé secrète.
+**Fichiers à lire en priorité**
+- [cart/render-cart.js](cart/render-cart.js) — rendu et interactions du panier
+- [cart/checkout.js](cart/checkout.js) — manipulation du panier côté page
+- [payment/payment.js](payment/payment.js) — calcul des totaux et logique de soumission
 
-**Développement**
-- Les modifications UI se font directement dans les fichiers HTML/CSS/JS.
-- `localStorage` est la source de vérité pour le panier. Pour réinitialiser : ouvrir DevTools → Application → Local Storage → supprimer la clé `cart`, ou appeler `clearCart()` depuis la console si `cart.js` est chargé.
+**Contribuer**
+- Fork, branchez vos modifs et proposez une PR. Toutes améliorations UX ou sécurité (paiement) sont bienvenues.
 
-**Fichiers importants à lire**
-- `cart/cart.js` — logique du panier (ajout, update, suppression, notifications `cartUpdated`).
-- `cart/render-cart.js` — rendering et interactions de la page panier.
-- `payment/payment.js` — calcule les totaux à partir du panier et gère la soumission.
-
-**Contribution**
-- Fork et PR bienvenue. Signalez toute amélioration liée à la sécurité des paiements ou UX.
+Merci d'utiliser ou d'explorer ce dépôt — dites-moi si vous souhaitez que j'ajoute un exemple d'endpoint serveur pour Stripe ou des instructions Docker.
