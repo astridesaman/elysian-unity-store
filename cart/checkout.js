@@ -167,7 +167,20 @@ document.addEventListener("click", (e) => {
         price: parseFloat(btn.dataset.price),
         size: activeSize.textContent,
         qty: qty,
-        image: btn.dataset.image
+        // Normalize image path to be root-relative and URI-encoded so it works from any page
+        image: (function() {
+            const raw = (btn.dataset.image || '').trim();
+            if (!raw) return '';
+            // If it's an absolute URL keep as-is (but still encode spaces)
+            if (raw.match(/^https?:\/\//i)) return encodeURI(raw);
+
+            // Make root-relative if needed
+            let normalized = raw.replace(/^\.\//, '');
+            if (!normalized.startsWith('/')) normalized = '/' + normalized;
+
+            // Encode URI to handle spaces and special chars but preserve slashes
+            return encodeURI(normalized);
+        })()
     };
 
     addToCart(product);

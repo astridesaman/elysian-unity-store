@@ -27,10 +27,49 @@ function renderCart() {
     // Render compact view if using `.cart-items-list` (different markup)
     const usingCompact = container.classList && container.classList.contains('cart-items-list');
 
+    // small inline SVG used as fallback when product image missing or 404
+    // expose global placeholder so repair function can access it
+    window.__cartImagePlaceholder = window.__cartImagePlaceholder || ('data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><rect fill="#e8e8e8" width="100%" height="100%"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#999" font-size="36">👕</text></svg>'));
+
+    // function to try several fixes when an <img> fails to load
+    window.__tryFixImgSrc = window.__tryFixImgSrc || function(img) {
+        try {
+            img.onerror = null; // prevent loops
+            const raw = img.getAttribute('src') || '';
+            const candidates = [];
+
+            // if raw contains spaces, try encodeURI version
+            if (raw.indexOf(' ') !== -1) candidates.push(encodeURI(raw));
+
+            // if it's relative (no leading slash), try with leading '/'
+            if (!raw.startsWith('/') && !raw.match(/^https?:\/\//)) candidates.push('/' + raw.replace(/^\.\//, ''));
+
+            // if image was stored from a /cart page, try removing /cart/ prefix
+            if (raw.indexOf('/cart/') !== -1) candidates.push(raw.replace('/cart/', '/'));
+
+            // specific common wrong prefix replacement
+            if (raw.indexOf('/cart/public') !== -1) candidates.push(raw.replace('/cart/public', '/public'));
+
+            // try encodeURI of raw as last attempt
+            candidates.push(encodeURI(raw));
+
+            for (let i = 0; i < candidates.length; i++) {
+                const c = candidates[i];
+                if (!c) continue;
+                if (c === raw || c === img.src) continue;
+                img.src = c;
+                return;
+            }
+        } catch (e) {
+            // fallthrough to placeholder
+        }
+        img.src = window.__cartImagePlaceholder;
+    };
+
     if (usingCompact) {
         container.innerHTML = cart.map(item => `
             <div class="cart-item-mini" data-id="${item.id}" data-size="${item.size}">
-                <img src="${item.image || ''}" alt="${item.name}">
+                <img src="${item.image || window.__cartImagePlaceholder}" alt="${item.name}" onerror="window.__tryFixImgSrc(this)">
                 <div class="info">
                     <h4>${item.name}</h4>
                     <div class="details">Taille: ${item.size}</div>
@@ -47,7 +86,7 @@ function renderCart() {
     } else {
         container.innerHTML = cart.map(item => `
             <div class="cart-item" data-id="${item.id}" data-size="${item.size}">
-                <img src="${item.image || ''}" alt="${item.name}">
+                <img src="${item.image || window.__cartImagePlaceholder}" alt="${item.name}" onerror="window.__tryFixImgSrc(this)">
                 <div class="item-info">
                     <h3>${item.name}</h3>
                     <div class="details">Taille : ${item.size}</div>

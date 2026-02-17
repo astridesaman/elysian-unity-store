@@ -129,14 +129,38 @@
       summaryContainer.innerHTML = '<p class="muted">Votre panier est vide.</p>';
       return;
     }
+    // ensure placeholder and repair function exist (mirrors cart/render-cart.js behavior)
+    window.__cartImagePlaceholder = window.__cartImagePlaceholder || ('data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><rect fill="#e8e8e8" width="100%" height="100%"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#999" font-size="36">👕</text></svg>'));
+    window.__tryFixImgSrc = window.__tryFixImgSrc || function(img) {
+      try {
+        img.onerror = null;
+        var raw = img.getAttribute('src') || '';
+        var candidates = [];
+        if (raw.indexOf(' ') !== -1) candidates.push(encodeURI(raw));
+        if (!raw.startsWith('/') && !raw.match(/^https?:\/\//)) candidates.push('/' + raw.replace(/^\.\//, ''));
+        if (raw.indexOf('/cart/') !== -1) candidates.push(raw.replace('/cart/', '/'));
+        if (raw.indexOf('/cart/public') !== -1) candidates.push(raw.replace('/cart/public', '/public'));
+        candidates.push(encodeURI(raw));
+        for (var j = 0; j < candidates.length; j++) {
+          var c = candidates[j];
+          if (!c) continue;
+          if (c === raw || c === img.src) continue;
+          img.src = c;
+          return;
+        }
+      } catch (e) {}
+      img.src = window.__cartImagePlaceholder;
+    };
+
     var html = '';
     for (var i = 0; i < cart.length; i++) {
       var it = cart[i];
       var line = (parseFloat(it.price) || 0) * (it.qty || 1);
-      var img = it.image || '/public/Charcoal Edition - Elysian Unity.png';
+      var rawImg = it.image || '/public/Charcoal Edition - Elysian Unity.png';
+      var imgSrc = rawImg ? encodeURI(rawImg) : window.__cartImagePlaceholder;
       html +=
         '<div class="summary-line" style="display:flex;gap:0.75rem;align-items:center;padding:0.6rem 0;border-bottom:1px solid #f0f0f0;">' +
-        '<img src="' + img + '" alt="' + (it.name || '') + '" style="width:56px;height:56px;object-fit:cover;border-radius:8px;">' +
+        '<img src="' + imgSrc + '" alt="' + (it.name || '') + '" style="width:56px;height:56px;object-fit:cover;border-radius:8px;" onerror="window.__tryFixImgSrc(this)">' +
         '<div style="flex:1;">' +
         '<div style="font-weight:600">' + (it.name || '') + '</div>' +
         '<div class="muted" style="font-size:0.9rem;margin-top:0.15rem">Taille ' + (it.size || '-') + ' • Quantité ' + (it.qty || 0) + '</div>' +
