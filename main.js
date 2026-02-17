@@ -9,74 +9,96 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-  //  Script sélection tailles
-  
-        document.querySelectorAll('.size-options').forEach(group => {
-            group.addEventListener('click', (e) => {
-                const btn = e.target.closest('.size-option');
-                if (!btn) return;
-                group.querySelectorAll('.size-option').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-            });
+  // Size selection + size-guide modal setup (deferred to DOMContentLoaded)
+  document.addEventListener('DOMContentLoaded', () => {
+    // Bind size-selection using event delegation per group and add accessibility attributes
+    document.querySelectorAll('.size-options').forEach(group => {
+      group.querySelectorAll('.size-option').forEach(btn => {
+        // Ensure button won't act as submit in forms and expose pressed state
+        if (btn.tagName.toLowerCase() === 'button' && !btn.hasAttribute('type')) btn.setAttribute('type', 'button');
+        btn.setAttribute('role', 'button');
+        btn.setAttribute('aria-pressed', btn.classList.contains('active') ? 'true' : 'false');
+        // keyboard support
+        btn.addEventListener('keydown', (ev) => {
+          if (ev.key === 'Enter' || ev.key === ' ') {
+            ev.preventDefault();
+            btn.click();
+          }
         });
- 
+      });
 
-    // Script modal guide des tailles
-  
-        const sizeModal = document.getElementById('size-guide-modal');
-        if (!sizeModal) return; // Not on this page
-        const backdrop = sizeModal.querySelector('.size-modal-backdrop');
-        const closeBtn = sizeModal.querySelector('.size-modal-close');
-        const tabButtons = sizeModal.querySelectorAll('.size-tab');
-        const panels = sizeModal.querySelectorAll('.size-panel');
-
-        function openSizeModal(initialProduct) {
-            tabButtons.forEach(btn => {
-                const tab = btn.getAttribute('data-tab');
-                btn.classList.toggle('active', tab === initialProduct);
-            });
-
-            panels.forEach(panel => {
-                panel.classList.toggle('active', panel.id === `size-panel-${initialProduct}`);
-            });
-
-            sizeModal.classList.add('open');
-            sizeModal.setAttribute('aria-hidden', 'false');
-        }
-
-        function closeSizeModal() {
-            sizeModal.classList.remove('open');
-            sizeModal.setAttribute('aria-hidden', 'true');
-        }
-
-        document.querySelectorAll('.size-guide-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const product = btn.getAttribute('data-product') || 'hoodie';
-                openSizeModal(product);
-            });
+      group.addEventListener('click', (e) => {
+        const btn = e.target.closest('.size-option');
+        if (!btn) return;
+        group.querySelectorAll('.size-option').forEach(b => {
+          b.classList.remove('active');
+          b.setAttribute('aria-pressed', 'false');
         });
+        btn.classList.add('active');
+        btn.setAttribute('aria-pressed', 'true');
+      });
+    });
 
-        closeBtn.addEventListener('click', closeSizeModal);
-        backdrop.addEventListener('click', closeSizeModal);
+    // Size-guide modal (only initialize if present) — avoid returning early from script
+    const sizeModal = document.getElementById('size-guide-modal');
+    if (sizeModal) {
+      const backdrop = sizeModal.querySelector('.size-modal-backdrop');
+      const closeBtn = sizeModal.querySelector('.size-modal-close');
+      const tabButtons = sizeModal.querySelectorAll('.size-tab');
+      const panels = sizeModal.querySelectorAll('.size-panel');
 
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && sizeModal.classList.contains('open')) {
-                closeSizeModal();
-            }
-        });
-
+      function openSizeModal(initialProduct) {
         tabButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const tab = btn.getAttribute('data-tab');
-
-                tabButtons.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-
-                panels.forEach(panel => {
-                    panel.classList.toggle('active', panel.id === `size-panel-${tab}`);
-                });
-            });
+          const tab = btn.getAttribute('data-tab');
+          btn.classList.toggle('active', tab === initialProduct);
         });
+
+        panels.forEach(panel => {
+          panel.classList.toggle('active', panel.id === `size-panel-${initialProduct}`);
+        });
+
+        sizeModal.classList.add('open');
+        sizeModal.setAttribute('aria-hidden', 'false');
+        // focus first interactive element for accessibility
+        const focusTarget = sizeModal.querySelector('.size-tab.active') || sizeModal.querySelector('.size-modal-close');
+        if (focusTarget) focusTarget.focus();
+      }
+
+      function closeSizeModal() {
+        sizeModal.classList.remove('open');
+        sizeModal.setAttribute('aria-hidden', 'true');
+      }
+
+      document.querySelectorAll('.size-guide-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const product = btn.getAttribute('data-product') || 'hoodie';
+          openSizeModal(product);
+        });
+      });
+
+      if (closeBtn) closeBtn.addEventListener('click', closeSizeModal);
+      if (backdrop) backdrop.addEventListener('click', closeSizeModal);
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && sizeModal.classList.contains('open')) {
+          closeSizeModal();
+        }
+      });
+
+      tabButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const tab = btn.getAttribute('data-tab');
+
+          tabButtons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+
+          panels.forEach(panel => {
+            panel.classList.toggle('active', panel.id === `size-panel-${tab}`);
+          });
+        });
+      });
+    }
+  });
     
 
 
